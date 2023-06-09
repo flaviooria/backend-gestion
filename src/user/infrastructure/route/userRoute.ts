@@ -1,20 +1,33 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/userController';
-import { PGUserReposityory } from '../user_respository/PGUserRespository';
-import { UserApplicationServiceUseCase } from '../../application/UserApplicationServiceUseCase';
 
-const userRepository = new PGUserReposityory();
-const userApplicacationServiceUseCase = new UserApplicationServiceUseCase(
-	userRepository,
+import { SqliteUserRepository } from '../user_respository/SQLITEUserRepository';
+import { UserApplicationServiceUseCase } from '../../application/UserApiServiceUseCase';
+import { UserEmailSenderServiceUseCase } from '../../application/UserEmailSenderService';
+import { NodeMailerRepository } from '../../../shared/email_sender/infrastructure/NodeMailerRepository';
+
+const userSqliteRepository = new SqliteUserRepository();
+const userApiServiceUseCase = new UserApplicationServiceUseCase(
+	userSqliteRepository,
 );
-const userController = new UserController(userApplicacationServiceUseCase);
+
+const emailRepository = new NodeMailerRepository();
+const userEmailSenderService = new UserEmailSenderServiceUseCase(
+	emailRepository,
+);
+
+const userController = new UserController(
+	userEmailSenderService,
+	userApiServiceUseCase,
+);
 
 const userRouter = Router();
 
-userRouter.post('/', userController.createUser.bind(userController));
 userRouter.get('/:id', userController.getUser.bind(userController));
-userRouter.put('/:id', userController.updateUser.bind(userController));
+userRouter.post('/', userController.createUser.bind(userController));
+userRouter.patch('/:id', userController.updateUser.bind(userController));
 userRouter.delete('/:id', userController.deleteUser.bind(userController));
-
+userRouter.post('/signin', userController.signIn.bind(userController));
+userRouter.put('/verify/:token', userController.verifyToken.bind(userController));
 
 export default userRouter;

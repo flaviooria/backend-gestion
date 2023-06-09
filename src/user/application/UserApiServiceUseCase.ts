@@ -3,27 +3,38 @@ import { User } from '../domain/User';
 
 export class UserApplicationServiceUseCase {
 	constructor(private userRepository: IUserRepository) {}
-	async getUser(id: string): Promise<User | null> {
+	async getUser(id: number): Promise<User | null> {
 		return await this.userRepository.getUser(id);
 	}
 	async getAllUser(): Promise<User[]> {
 		return await this.userRepository.getAllUser();
 	}
 	async createUser(
-		id: string,
+		
 		username: string,
 		email: string,
 		password: string,
-
-	): Promise<User> {
-		const user = new User(id, username, email, password);
+		token: string
+	): Promise<User | undefined> {
+		const user = new User(  username, email, password, token);
 
 		return await this.userRepository.createUser(user);
 	}
-	async deleteUser(id: string): Promise<boolean> {
+	async deleteUser(id: number): Promise<boolean> {
 		return await this.userRepository.deleteUser(id);
 	}
-	async updateUser(id: string, fieldsToUpdate: Partial<User>): Promise<User> {
+	async updateUser(
+		id: number,
+		fieldsToUpdate: Partial<User>,
+	): Promise<User | undefined> {
 		return await this.userRepository.updateUser(id, fieldsToUpdate);
+	}
+
+	async signIn(email: string, password: string): Promise<User | null> {
+		return await this.userRepository.signIn(email, password);
+	}
+
+	async verifyToken(token: string): Promise<User | null> {
+		return await this.userRepository.verifyToken(token);
 	}
 }
