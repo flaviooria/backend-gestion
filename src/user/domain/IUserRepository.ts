@@ -10,5 +10,5 @@ export interface IUserRepository {
 		fieldsToUpdate: Partial<User>,
 	): Promise<User | undefined>;
 	signIn(email: string, password: string): Promise<User | null>;
-	verifyToken(token: string): Promise<User | null>;
+	getUserByToken(token: string): Promise<User | null>;
 }

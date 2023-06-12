@@ -8,16 +8,15 @@ import {
 
 export class NodeMailerRepository implements EmailRepository {
 	private readonly tranpsorter: Transporter;
-
+	
 	constructor() {
-		// TODO => Cambiar a variables de entorno
 		this.tranpsorter = nodemailer.createTransport({
-			host: 'smtp-relay.sendinblue.com',
-			port: 587,
+			host: process.env.EMAIL_HOST,
+			port: Number(process.env.EMAIL_PORT),
 			auth: {
-				user: 'foria@creatio-control.com',
-				pass: 'YHQy15EbjUZCcAt3',
-			},
+				user: process.env.EMAIL_AUTH_USER,
+				pass: process.env.EMAIL_AUTH_PASS,
+			}
 		});
 	}
 

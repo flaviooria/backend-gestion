@@ -96,7 +96,7 @@ export class UserController {
 
 			const deleteUser = await this.userApiService.deleteUser(Number(id));
 
-			if (deleteUser) res.status(200).send({ message: 'User deleted' });
+			if (deleteUser) res.status(200).send({ message: `User with id ${id} deleted` });
 			else res.status(404).send({ message: 'User not found' });
 		} catch (error: any) {
 			res
@@ -150,7 +150,13 @@ export class UserController {
 
 			//Password match or not match
 			if (bcrypt.compareSync(password, userFinded?.password!))
-				return res.status(200).send({ message: 'User Logged' });
+				return res.status(200).send({ message: {
+					id: userFinded?.id,
+					username: userFinded?.username,
+					email: userFinded?.email,
+					isVerified: userFinded?.isVerified,
+					isAdmin: userFinded?.isAdmin,
+				} });
 			else return res.status(401).send({ message: 'Invalid credentials' });
 		} catch (error: any) {
 			res
@@ -167,13 +173,20 @@ export class UserController {
 
 			if (!token) return res.status(400).send({ message: 'Field not valid!' });
 
-			const userFinded = await this.userApiService.verifyToken(token);
+			const userFinded = await this.userApiService.getUserByToken(token);
 
 			if (userFinded?.tokenAccount == token) {
-				await this.userApiService.updateUser(userFinded?.id as number, {
+			const userUpdated =	await this.userApiService.updateUser(userFinded?.id as number, {
 					isVerified: true,
 				});
-				return res.status(200).send({ message: 'User verified' });
+
+				return res.status(200).send({ message: {
+					id: userUpdated?.id,
+					username: userUpdated?.username,
+					email: userUpdated?.email,
+					isVerified: userUpdated?.isVerified,
+					isAdmin: userUpdated?.isAdmin,
+				} });
 			} else {
 				return res.status(401).send({ message: 'Invalid token' });
 			}

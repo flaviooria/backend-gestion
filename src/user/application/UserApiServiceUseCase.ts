@@ -34,7 +34,7 @@ export class UserApplicationServiceUseCase {
 		return await this.userRepository.signIn(email, password);
 	}
 
-	async verifyToken(token: string): Promise<User | null> {
-		return await this.userRepository.verifyToken(token);
+	async getUserByToken(token: string): Promise<User | null> {
+		return await this.userRepository.getUserByToken(token);
 	}
 }

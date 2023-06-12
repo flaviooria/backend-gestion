@@ -84,7 +84,7 @@ export class SqliteUserRepository implements IUserRepository {
 		}
 	}
 
-	async verifyToken(token: string): Promise<User | null> {
+	async getUserByToken(token: string): Promise<User | null> {
 		try {
 			const userLoged = await prisma.user.findFirst({
 				where: { tokenAccount: token },
