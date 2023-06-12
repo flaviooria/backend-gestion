@@ -117,7 +117,7 @@ export class SqliteUserRepository implements IUserRepository {
 		try {
 			const userLoged = prisma.user.findFirst({
 				where: { tokenResetPassword: token },
-			})
+			});
 
 			//user not found
 			if (!userLoged) return null;

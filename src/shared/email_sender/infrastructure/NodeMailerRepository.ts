@@ -9,7 +9,7 @@ import {
 
 export class NodeMailerRepository implements EmailRepository {
 	private readonly tranpsorter: Transporter;
-	
+
 	constructor() {
 		this.tranpsorter = nodemailer.createTransport({
 			host: process.env.EMAIL_HOST,
@@ -17,10 +17,9 @@ export class NodeMailerRepository implements EmailRepository {
 			auth: {
 				user: process.env.EMAIL_AUTH_USER,
 				pass: process.env.EMAIL_AUTH_PASS,
-			}
+			},
 		});
 	}
-	
 
 	async sendMail(mailOptions: MailOptions): Promise<any> {
 		return this.tranpsorter.sendMail(mailOptions);
@@ -45,6 +44,6 @@ export class NodeMailerRepository implements EmailRepository {
 	async notifyUserForResetPassword(email: string, token: string) {
 		await this.sendMail(
 			resetPasswordEmailTemplate('foria@creatio-control.com', email, token),
-		)
+		);
 	}
 }
