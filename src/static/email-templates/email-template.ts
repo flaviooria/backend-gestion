@@ -34,3 +34,21 @@ export const notifyAdminNewUserEmailTemplate = (
     `,
 	};
 };
+
+export const resetPasswordEmailTemplate = (
+	emailFrom: string,
+	emailRegistered: string,
+	tokenResetPassword: string,
+) => {
+	return {
+		from: emailFrom,
+		to: emailRegistered,
+		subject: `Reset Password`,
+		text: `Reset Password: ${tokenResetPassword}`,
+		html: `<h1>Hi, ${emailRegistered}</h1>
+	  	<p>You are receiving this email because you (or someone else) has requested the reset of the password for your account.</p>
+		<p>Please copy the code and past in the field to reset your password.</p>
+		<p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+		<p>This is the token: ${tokenResetPassword}</p>`,
+	};
+};

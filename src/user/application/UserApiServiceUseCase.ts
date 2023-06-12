@@ -37,4 +37,12 @@ export class UserApplicationServiceUseCase {
 	async getUserByToken(token: string): Promise<User | null> {
 		return await this.userRepository.getUserByToken(token);
 	}
+
+	async getUserByEmail(email: string): Promise<User | null> {
+		return await this.userRepository.getUserByEmail(email);
+	}
+	
+	async getUserByTokenResetPassword(token: string): Promise<User | null> {
+		return await this.userRepository.getUserByTokenResetPassword(token);
+	}
 }

@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { UserApplicationServiceUseCase } from '../../application/UserApiServiceUseCase';
 import { UserEmailSenderServiceUseCase } from '../../application/UserEmailSenderService';
+import { nanoid } from 'nanoid';
 
 export class UserController {
 	constructor(
@@ -96,7 +97,8 @@ export class UserController {
 
 			const deleteUser = await this.userApiService.deleteUser(Number(id));
 
-			if (deleteUser) res.status(200).send({ message: `User with id ${id} deleted` });
+			if (deleteUser)
+				res.status(200).send({ message: `User with id ${id} deleted` });
 			else res.status(404).send({ message: 'User not found' });
 		} catch (error: any) {
 			res
@@ -150,13 +152,15 @@ export class UserController {
 
 			//Password match or not match
 			if (bcrypt.compareSync(password, userFinded?.password!))
-				return res.status(200).send({ message: {
-					id: userFinded?.id,
-					username: userFinded?.username,
-					email: userFinded?.email,
-					isVerified: userFinded?.isVerified,
-					isAdmin: userFinded?.isAdmin,
-				} });
+				return res.status(200).send({
+					message: {
+						id: userFinded?.id,
+						username: userFinded?.username,
+						email: userFinded?.email,
+						isVerified: userFinded?.isVerified,
+						isAdmin: userFinded?.isAdmin,
+					},
+				});
 			else return res.status(401).send({ message: 'Invalid credentials' });
 		} catch (error: any) {
 			res
@@ -176,20 +180,109 @@ export class UserController {
 			const userFinded = await this.userApiService.getUserByToken(token);
 
 			if (userFinded?.tokenAccount == token) {
-			const userUpdated =	await this.userApiService.updateUser(userFinded?.id as number, {
-					isVerified: true,
-				});
+				const userUpdated = await this.userApiService.updateUser(
+					userFinded?.id as number,
+					{
+						isVerified: true,
+					},
+				);
 
-				return res.status(200).send({ message: {
-					id: userUpdated?.id,
-					username: userUpdated?.username,
-					email: userUpdated?.email,
-					isVerified: userUpdated?.isVerified,
-					isAdmin: userUpdated?.isAdmin,
-				} });
+				return res.status(200).send({
+					message: {
+						id: userUpdated?.id,
+						username: userUpdated?.username,
+						email: userUpdated?.email,
+						isVerified: userUpdated?.isVerified,
+						isAdmin: userUpdated?.isAdmin,
+					},
+				});
 			} else {
 				return res.status(401).send({ message: 'Invalid token' });
 			}
+		} catch (error: any) {
+			res
+				.status(error?.status || 500)
+				.send({ message: error?.message || 'Internal server error' });
+		}
+	}
+
+	public async forgotPasswordSendemail(req: Request, res: Response) {
+		try {
+			const {
+				body: { email },
+			} = req;
+
+			const userFounded = await this.userApiService.getUserByEmail(email);
+
+			if (!userFounded) {
+				return res.status(404).send({ message: 'User not found' });
+			}
+
+			const token = nanoid(6);
+
+			const updateUser = await this.userApiService.updateUser(
+				userFounded?.id as number,
+				{
+					tokenResetPassword: token,
+				},
+			);
+
+			//Envio mail
+			await this.userEmailSenderService.notifyUserForResetPassword(
+				email,
+				token,
+			);
+
+			res.status(201).send({
+				message: {
+					id: updateUser?.id,
+					email: updateUser?.email,
+					tokenResetPassword: updateUser?.tokenResetPassword,
+				},
+			});
+		} catch (error: any) {
+			res
+				.status(error?.status || 500)
+				.send({ message: error?.message || 'Internal server error' });
+		}
+	}
+
+	public async forgotPasswordVerify(req: Request, res: Response) {
+		try {
+			const {
+				body: { token, password },
+			} = req;
+
+			if (!token || !password)
+				return res.status(400).send({ message: 'Field not valid!' });
+
+			const userFinded = await this.userApiService.getUserByTokenResetPassword(
+				token,
+			);
+
+			if (!userFinded)
+				return res.status(404).send({ message: 'User not found' });
+
+			//Encriptar contraseña
+			const passwordHash = bcrypt.hashSync(password, 5);
+
+			const updateUser = await this.userApiService.updateUser(
+				userFinded?.id as number,
+				{
+					password: passwordHash,
+					tokenResetPassword: '',
+				},
+			);
+
+			res.status(201).send({
+				message: {
+					id: updateUser?.id,
+					username: updateUser?.username,
+					email: updateUser?.email,
+					isVerified: updateUser?.isVerified,
+					isAdmin: updateUser?.isAdmin,
+				},
+			});
 		} catch (error: any) {
 			res
 				.status(error?.status || 500)

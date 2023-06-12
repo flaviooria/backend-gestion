@@ -10,4 +10,11 @@ export class UserEmailSenderServiceUseCase {
 	): Promise<any> {
 		return this.emailRepository.notifyUserForNewSignUp(email, username, token);
 	}
+
+	async notifyUserForResetPassword(
+		email: string,
+		token: string,
+	): Promise<any> {
+		return this.emailRepository.notifyUserForResetPassword(email, token);
+	}
 }
