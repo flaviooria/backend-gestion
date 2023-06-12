@@ -1,13 +1,11 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isAdmin" BOOLEAN,
-    "isVerified" BOOLEAN,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    "isAdmin" BOOLEAN DEFAULT true,
+    "isVerified" BOOLEAN DEFAULT false
 );
 
 -- CreateIndex

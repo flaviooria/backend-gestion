@@ -2,7 +2,6 @@ import { Application } from 'express';
 import { Router } from 'express';
 import userRouter from './route/userRoute';
 
-
 function initRouter(app: Application) {
 	let routerController = Router();
 

@@ -5,7 +5,7 @@ import { User } from '../../domain/User';
 export class PGUserReposityory implements IUserRepository {
 	private prisma = new PrismaClient();
 
-	async getUser(id: string): Promise<User | null> {
+	async getUser(id: number): Promise<User | null> {
 		const userFounded = await this.prisma.user.findUnique({
 			where: { id: id },
 		});
@@ -20,7 +20,7 @@ export class PGUserReposityory implements IUserRepository {
 		return allUsers;
 	}
 	async createUser(user: User): Promise<User> {
-		let userCreated:User;
+		let userCreated: User;
 		try {
 			userCreated = await this.prisma.user.create({
 				data: {
@@ -28,18 +28,18 @@ export class PGUserReposityory implements IUserRepository {
 					username: user.username,
 					email: user.email,
 					password: user.password,
+					tokenAccount: user.tokenAccount,
 					isAdmin: user.isAdmin,
 					isVerified: user.isVerified,
 				},
 			});
-		} catch (error:any) {
-			if(error.code == 'P2002'){
-				
+		} catch (error: any) {
+			if (error.code == 'P2002') {
 			}
 		}
 		return userCreated!;
 	}
-	async deleteUser(id: string): Promise<boolean> {
+	async deleteUser(id: number): Promise<boolean> {
 		try {
 			await this.prisma.user.delete({
 				where: {
@@ -53,7 +53,7 @@ export class PGUserReposityory implements IUserRepository {
 		}
 		return true;
 	}
-	async updateUser(id: string, fieldsToUpdate: Partial<User>): Promise<User> {
+	async updateUser(id: number, fieldsToUpdate: Partial<User>): Promise<User> {
 		let userUpdated: User;
 		try {
 			userUpdated = await this.prisma.user.update({
