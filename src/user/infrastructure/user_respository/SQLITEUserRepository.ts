@@ -3,7 +3,6 @@ import { IUserRepository } from '../../domain/IUserRepository';
 import { User } from '../../domain/User';
 
 export class SqliteUserRepository implements IUserRepository {
-
 	async getUser(id: number): Promise<User | null> {
 		try {
 			const userFounded = await prisma.user.findUnique({

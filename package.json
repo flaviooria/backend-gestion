@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build:clean && npm run build:tsc",
+    "build:clean": "rm -r ./dist;exit 0",
+    "build:tsc": "tsc -p tsconfig.json",
+    "tsc": "tsc",
     "studio": "npx prisma studio",
     "format": "prettier --write \"src/**/*.ts\" \"./dist/src/**/*.js\"",
-    "start": "node ./dist/src/main.js",
+    "start": "node dist/src/main.js",
     "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

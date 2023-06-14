@@ -3,6 +3,12 @@ import { IUserRepository } from '../../domain/IUserRepository';
 import { User } from '../../domain/User';
 
 export class PGUserReposityory implements IUserRepository {
+	signIn(email: string, password: string): Promise<User | null> {
+		throw new Error('Method not implemented.');
+	}
+	getUserByToken(token: string): Promise<User | null> {
+		throw new Error('Method not implemented.');
+	}
 	private prisma = new PrismaClient();
 
 	async getUser(id: number): Promise<User | null> {
