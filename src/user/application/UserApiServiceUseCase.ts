@@ -1,7 +1,7 @@
 import { IUserRepository } from '../domain/IUserRepository';
 import { User } from '../domain/User';
 
-export class UserApplicationServiceUseCase {
+export class UserApiServiceUseCase {
 	constructor(private userRepository: IUserRepository) {}
 	async getUser(id: number): Promise<User | null> {
 		return await this.userRepository.getUser(id);
@@ -10,13 +10,12 @@ export class UserApplicationServiceUseCase {
 		return await this.userRepository.getAllUser();
 	}
 	async createUser(
-		
 		username: string,
 		email: string,
 		password: string,
-		token: string
+		token: string,
 	): Promise<User | undefined> {
-		const user = new User(  username, email, password, token);
+		const user = new User(username, email, password, token);
 
 		return await this.userRepository.createUser(user);
 	}
@@ -36,5 +35,13 @@ export class UserApplicationServiceUseCase {
 
 	async getUserByToken(token: string): Promise<User | null> {
 		return await this.userRepository.getUserByToken(token);
+	}
+
+	async getUserByEmail(email: string): Promise<User | null> {
+		return await this.userRepository.getUserByEmail(email);
+	}
+
+	async getUserByTokenResetPassword(token: string): Promise<User | null> {
+		return await this.userRepository.getUserByTokenResetPassword(token);
 	}
 }

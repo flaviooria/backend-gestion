@@ -4,19 +4,20 @@ import { MailOptions } from 'nodemailer/lib/json-transport';
 import {
 	newUserEmailTemplate,
 	notifyAdminNewUserEmailTemplate,
+	resetPasswordEmailTemplate,
 } from '../../../static/email-templates/email-template';
+import { properties } from '../../../config/env.properties';
 
 export class NodeMailerRepository implements EmailRepository {
 	private readonly tranpsorter: Transporter;
-	
 	constructor() {
 		this.tranpsorter = nodemailer.createTransport({
-			host: process.env.EMAIL_HOST,
-			port: Number(process.env.EMAIL_PORT),
+			host: properties.EMAIL_HOST,
+			port: Number(properties.EMAIL_PORT),
 			auth: {
-				user: process.env.EMAIL_AUTH_USER,
-				pass: process.env.EMAIL_AUTH_PASS,
-			}
+				user: properties.EMAIL_AUTH_USER,
+				pass: properties.EMAIL_AUTH_PASS,
+			},
 		});
 	}
 
@@ -37,6 +38,12 @@ export class NodeMailerRepository implements EmailRepository {
 	async notifyUserForNewSignUp(email: string, username: string, token: string) {
 		await this.sendMail(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
+		);
+	}
+
+	async notifyUserForResetPassword(email: string, token: string) {
+		await this.sendMail(
+			resetPasswordEmailTemplate('foria@creatio-control.com', email, token),
 		);
 	}
 }

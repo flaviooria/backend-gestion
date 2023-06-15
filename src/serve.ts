@@ -1,10 +1,6 @@
 import express, { Application, urlencoded } from 'express';
-import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { initRouter } from './user/infrastructure/init.route';
-
-dotenv.config();
-
 const app: Application = express();
 
 app.use(cors());
