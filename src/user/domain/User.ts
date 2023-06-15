@@ -7,5 +7,6 @@ export class User {
 		public readonly id?: number,
 		public readonly isAdmin?: boolean | null,
 		public readonly isVerified?: boolean | null,
+		public readonly tokenResetPassword?: string | null,
 	) {}
 }

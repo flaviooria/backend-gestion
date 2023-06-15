@@ -97,4 +97,34 @@ export class SqliteUserRepository implements IUserRepository {
 			throw new Error('Something goes wrong on sign in user');
 		}
 	}
+
+	async getUserByEmail(email: string): Promise<User | null> {
+		try {
+			const userLoged = await prisma.user.findFirst({
+				where: { email: email },
+			});
+
+			//user not found
+			if (!userLoged) return null;
+
+			return userLoged;
+		} catch (error) {
+			throw new Error('Something goes wrong on bringing the user');
+		}
+	}
+
+	async getUserByTokenResetPassword(token: string): Promise<User | null> {
+		try {
+			const userLoged = prisma.user.findFirst({
+				where: { tokenResetPassword: token },
+			});
+
+			//user not found
+			if (!userLoged) return null;
+
+			return userLoged;
+		} catch (error) {
+			throw new Error('Something goes wrong on bringing the user');
+		}
+	}
 }

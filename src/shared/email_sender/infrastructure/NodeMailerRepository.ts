@@ -4,6 +4,7 @@ import { MailOptions } from 'nodemailer/lib/json-transport';
 import {
 	newUserEmailTemplate,
 	notifyAdminNewUserEmailTemplate,
+	resetPasswordEmailTemplate,
 } from '../../../static/email-templates/email-template';
 import { properties } from '../../../config/env.properties';
 
@@ -37,6 +38,12 @@ export class NodeMailerRepository implements EmailRepository {
 	async notifyUserForNewSignUp(email: string, username: string, token: string) {
 		await this.sendMail(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
+		);
+	}
+
+	async notifyUserForResetPassword(email: string, token: string) {
+		await this.sendMail(
+			resetPasswordEmailTemplate('foria@creatio-control.com', email, token),
 		);
 	}
 }

@@ -3,6 +3,12 @@ import { IUserRepository } from '../../domain/IUserRepository';
 import { User } from '../../domain/User';
 
 export class PGUserReposityory implements IUserRepository {
+	getUserByEmail(email: string): Promise<User | null> {
+		throw new Error('Method not implemented.');
+	}
+	getUserByTokenResetPassword(token: string): Promise<User | null> {
+		throw new Error('Method not implemented.');
+	}
 	signIn(email: string, password: string): Promise<User | null> {
 		throw new Error('Method not implemented.');
 	}

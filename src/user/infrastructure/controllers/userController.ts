@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { UserApiServiceUseCase } from '../../application/UserApiServiceUseCase';
 import { UserEmailSenderServiceUseCase } from '../../application/UserEmailSenderService';
+import { nanoid } from 'nanoid';
 
 export class UserController {
 	constructor(
@@ -22,7 +23,7 @@ export class UserController {
 				return res.status(404).send({ message: 'User not found' });
 			}
 
-			res.status(200).send({
+			res.status(201).send({
 				message: {
 					username: userFounded?.username,
 					email: userFounded?.email,
@@ -215,6 +216,90 @@ export class UserController {
 			} else {
 				return res.status(401).send({ message: 'Invalid token' });
 			}
+		} catch (error: any) {
+			res
+				.status(error?.status || 500)
+				.send({ message: error?.message || 'Internal server error' });
+		}
+	}
+
+	public async forgotPasswordSendemail(req: Request, res: Response) {
+		try {
+			const {
+				body: { email },
+			} = req;
+
+			const userFounded = await this.userApiService.getUserByEmail(email);
+
+			if (!userFounded) {
+				return res.status(404).send({ message: 'User not found' });
+			}
+
+			const token = nanoid(6);
+
+			const updateUser = await this.userApiService.updateUser(
+				userFounded?.id as number,
+				{
+					tokenResetPassword: token,
+				},
+			);
+
+			//Envio mail
+			await this.userEmailSenderService.notifyUserForResetPassword(
+				email,
+				token,
+			);
+
+			res.status(201).send({
+				message: {
+					id: updateUser?.id,
+					email: updateUser?.email,
+					tokenResetPassword: updateUser?.tokenResetPassword,
+				},
+			});
+		} catch (error: any) {
+			res
+				.status(error?.status || 500)
+				.send({ message: error?.message || 'Internal server error' });
+		}
+	}
+
+	public async forgotPasswordVerify(req: Request, res: Response) {
+		try {
+			const {
+				body: { token, password },
+			} = req;
+
+			if (!token || !password)
+				return res.status(400).send({ message: 'Field not valid!' });
+
+			const userFinded = await this.userApiService.getUserByTokenResetPassword(
+				token,
+			);
+
+			if (!userFinded)
+				return res.status(404).send({ message: 'User not found' });
+
+			//Encriptar contraseña
+			const passwordHash = bcrypt.hashSync(password, 5);
+
+			const updateUser = await this.userApiService.updateUser(
+				userFinded?.id as number,
+				{
+					password: passwordHash,
+					tokenResetPassword: '',
+				},
+			);
+
+			res.status(201).send({
+				message: {
+					id: updateUser?.id,
+					username: updateUser?.username,
+					email: updateUser?.email,
+					isVerified: updateUser?.isVerified,
+					isAdmin: updateUser?.isAdmin,
+				},
+			});
 		} catch (error: any) {
 			res
 				.status(error?.status || 500)

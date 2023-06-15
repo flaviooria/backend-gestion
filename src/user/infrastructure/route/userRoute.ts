@@ -22,13 +22,21 @@ const userController = new UserController(
 const userRouter = Router();
 
 userRouter.get('/:id', userController.getUser.bind(userController));
+userRouter.post('/', userController.createUser.bind(userController));
+userRouter.patch(
+	'/reset-password',
+	userController.forgotPasswordSendemail.bind(userController),
+);
+userRouter.patch(
+	'/reset-password/verify',
+	userController.forgotPasswordVerify.bind(userController),
+);
+userRouter.patch('/:id', userController.updateUser.bind(userController));
+userRouter.delete('/:id', userController.deleteUser.bind(userController));
+userRouter.post('/signin', userController.signIn.bind(userController));
 userRouter.get(
 	'/verify/:token',
 	userController.verifyNewUserByToken.bind(userController),
 );
-userRouter.post('/signup', userController.createUser.bind(userController));
-userRouter.post('/signin', userController.signIn.bind(userController));
-userRouter.patch('/:id', userController.updateUser.bind(userController));
-userRouter.delete('/:id', userController.deleteUser.bind(userController));
 
 export default userRouter;
