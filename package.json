@@ -9,6 +9,7 @@
     "build:tsc": "tsc -p tsconfig.json",
     "tsc": "tsc",
     "studio": "npx prisma studio",
+    "migrate": "npx prisma migrate dev",
     "format": "prettier --write \"src/**/*.ts\" \"./dist/src/**/*.js\"",
     "start": "node dist/src/main.js",
     "dev": "nodemon",
