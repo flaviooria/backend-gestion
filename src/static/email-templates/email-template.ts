@@ -1,3 +1,5 @@
+import { properties } from '../../config/env.properties';
+
 export const newUserEmailTemplate = (
 	emailFrom: string,
 	emailRegistered: string,
@@ -13,7 +15,7 @@ export const newUserEmailTemplate = (
       <h1>Welcome to our website!</h1>
       <p>We're glad you've decided to join us. We hope you find everything you're looking for here and enjoy using our site.</p>
       <p>If you have any questions or need any help, please don't hesitate to contact us. Thank you for signing up!</p>
-	  <p>this is your token ${token}</p>
+	  <p>this is your token <a href="${properties.URL_FRONTEND}/verify?token=${token}">Verificar</a></p>
     `,
 	};
 };

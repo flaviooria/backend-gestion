@@ -22,7 +22,7 @@ export class NodeMailerRepository implements EmailRepository {
 	}
 
 	private async sendMail(mailOptions: MailOptions): Promise<any> {
-		return this.tranpsorter.sendMail(mailOptions);
+		return await this.tranpsorter.sendMail(mailOptions);
 	}
 
 	private async sendMailTest(mailOption: MailOptions) {
@@ -35,11 +35,11 @@ export class NodeMailerRepository implements EmailRepository {
 			},
 		});
 
-		return tranpsorterTest.sendMail(mailOption);
+		return await tranpsorterTest.sendMail(mailOption);
 	}
 
 	async notifyAdminForNewUser(email: string, username: string) {
-		await this.sendMail(
+		return await this.sendMail(
 			notifyAdminNewUserEmailTemplate(
 				'foria@creatio-control.com',
 				email,
@@ -49,7 +49,7 @@ export class NodeMailerRepository implements EmailRepository {
 	}
 
 	async notifyUserForNewSignUp(email: string, username: string, token: string) {
-		await this.sendMail(
+		return await this.sendMail(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
 		);
 	}
@@ -59,13 +59,13 @@ export class NodeMailerRepository implements EmailRepository {
 		username: string,
 		token: string,
 	) {
-		await this.sendMailTest(
+		return await this.sendMailTest(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
 		);
 	}
 
 	async notifyUserForResetPassword(email: string, token: string) {
-		await this.sendMail(
+		return await this.sendMail(
 			resetPasswordEmailTemplate('foria@creatio-control.com', email, token),
 		);
 	}

@@ -13,4 +13,6 @@ export const properties = {
 	EMAIL_PORT: process.env.EMAIL_PORT,
 	EMAIL_AUTH_USER: process.env.EMAIL_AUTH_USER,
 	EMAIL_AUTH_PASS: process.env.EMAIL_AUTH_PASS,
+	MODE: process.env.MODE,
+	URL_FRONTEND: process.env.URL_FRONT,
 };

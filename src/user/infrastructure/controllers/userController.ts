@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UserApiServiceUseCase } from '../../application/UserApiServiceUseCase';
 import { UserEmailSenderServiceUseCase } from '../../application/UserEmailSenderService';
 import { nanoid } from 'nanoid';
+import { properties } from '../../../config/env.properties';
 
 export class UserController {
 	constructor(
@@ -23,7 +24,7 @@ export class UserController {
 				return res.status(404).send({ message: 'User not found' });
 			}
 
-			res.status(201).send({
+			res.status(200).send({
 				message: {
 					username: userFounded?.username,
 					email: userFounded?.email,
@@ -68,14 +69,25 @@ export class UserController {
 				return;
 			}
 
-			// Envio de email
-			const info = await this.userEmailSenderService.notifyUserWhenUserSignUp(
-				email,
-				username,
-				token,
-			);
+			if (properties.MODE === 'develop') {
+				// Envio de email
+				const info =
+					await this.userEmailSenderService.notifyUserWhenUserSignUpTest(
+						email,
+						username,
+						token,
+					);
 
-			console.log(info);
+				console.log(info);
+			} else {
+				const info = await this.userEmailSenderService.notifyUserWhenUserSignUp(
+					email,
+					username,
+					token,
+				);
+
+				console.log(info);
+			}
 
 			res.status(201).send({
 				message: {
