@@ -14,4 +14,16 @@ export class UserEmailSenderServiceUseCase {
 	async notifyUserForResetPassword(email: string, token: string): Promise<any> {
 		return this.emailRepository.notifyUserForResetPassword(email, token);
 	}
+
+	async notifyUserWhenUserSignUpTest(
+		email: string,
+		username: string,
+		token: string,
+	): Promise<any> {
+		return this.emailRepository.notifyUserForNewSignUpTest(
+			email,
+			username,
+			token,
+		);
+	}
 }

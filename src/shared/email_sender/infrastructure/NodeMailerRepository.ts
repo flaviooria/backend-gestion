@@ -21,8 +21,21 @@ export class NodeMailerRepository implements EmailRepository {
 		});
 	}
 
-	async sendMail(mailOptions: MailOptions): Promise<any> {
+	private async sendMail(mailOptions: MailOptions): Promise<any> {
 		return this.tranpsorter.sendMail(mailOptions);
+	}
+
+	private async sendMailTest(mailOption: MailOptions) {
+		const tranpsorterTest = nodemailer.createTransport({
+			host: 'smtp.ethereal.email',
+			port: 587,
+			auth: {
+				user: 'krystal.collier@ethereal.email',
+				pass: 'kzQMUPtw6C9nddDjgZ',
+			},
+		});
+
+		return tranpsorterTest.sendMail(mailOption);
 	}
 
 	async notifyAdminForNewUser(email: string, username: string) {
@@ -37,6 +50,16 @@ export class NodeMailerRepository implements EmailRepository {
 
 	async notifyUserForNewSignUp(email: string, username: string, token: string) {
 		await this.sendMail(
+			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
+		);
+	}
+
+	async notifyUserForNewSignUpTest(
+		email: string,
+		username: string,
+		token: string,
+	) {
+		await this.sendMailTest(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
 		);
 	}
