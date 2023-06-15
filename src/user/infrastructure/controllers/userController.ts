@@ -23,7 +23,7 @@ export class UserController {
 				return res.status(404).send({ message: 'User not found' });
 			}
 
-			res.status(200).send({
+			res.status(201).send({
 				message: {
 					username: userFounded?.username,
 					email: userFounded?.email,
@@ -98,7 +98,7 @@ export class UserController {
 			const deleteUser = await this.userApiService.deleteUser(Number(id));
 
 			if (deleteUser)
-				res.status(200).send({ message: `User with id ${id} deleted` });
+				res.status(201).send({ message: `User with id ${id} deleted` });
 			else res.status(404).send({ message: 'User not found' });
 		} catch (error: any) {
 			res
@@ -152,7 +152,7 @@ export class UserController {
 
 			//Password match or not match
 			if (bcrypt.compareSync(password, userFinded?.password!))
-				return res.status(200).send({
+				return res.status(201).send({
 					message: {
 						id: userFinded?.id,
 						username: userFinded?.username,
@@ -187,7 +187,7 @@ export class UserController {
 					},
 				);
 
-				return res.status(200).send({
+				return res.status(201).send({
 					message: {
 						id: userUpdated?.id,
 						username: userUpdated?.username,

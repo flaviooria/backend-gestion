@@ -36,7 +36,7 @@ userRouter.patch(
 userRouter.patch('/:id', userController.updateUser.bind(userController));
 userRouter.delete('/:id', userController.deleteUser.bind(userController));
 userRouter.post('/signin', userController.signIn.bind(userController));
-userRouter.patch(
+userRouter.get(
 	'/verify/:token',
 	userController.verifyToken.bind(userController),
 );
