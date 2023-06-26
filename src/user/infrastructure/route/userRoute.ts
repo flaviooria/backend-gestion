@@ -28,11 +28,11 @@ userRouter.get(
 );
 userRouter.post('/signup', userController.createUser.bind(userController));
 userRouter.post('/signin', userController.signIn.bind(userController));
-userRouter.patch(
+userRouter.post(
 	'/reset-password',
-	userController.forgotPasswordSendemail.bind(userController),
+	userController.forgotPasswordSendEmail.bind(userController),
 );
-userRouter.patch(
+userRouter.post(
 	'/reset-password/verify',
 	userController.forgotPasswordVerify.bind(userController),
 );

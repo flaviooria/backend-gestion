@@ -1,3 +1,3 @@
-import { boostrap } from './serve';
+import { bootstrap } from './server';
 
-boostrap();
+bootstrap();

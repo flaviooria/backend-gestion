@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { UserApiServiceUseCase } from '../../application/UserApiServiceUseCase';
 import { UserEmailSenderServiceUseCase } from '../../application/UserEmailSenderService';
 import { nanoid } from 'nanoid';
-import { properties } from '../../../config/env.properties';
 
 export class UserController {
 	constructor(
@@ -69,25 +68,13 @@ export class UserController {
 				return;
 			}
 
-			if (properties.MODE === 'develop') {
-				// Envio de email
-				const info =
-					await this.userEmailSenderService.notifyUserWhenUserSignUpTest(
-						email,
-						username,
-						token,
-					);
+			const info = await this.userEmailSenderService.notifyUserWhenUserSignUp(
+				email,
+				username,
+				token,
+			);
 
-				console.log(info);
-			} else {
-				const info = await this.userEmailSenderService.notifyUserWhenUserSignUp(
-					email,
-					username,
-					token,
-				);
-
-				console.log(info);
-			}
+			console.log(info);
 
 			res.status(201).send({
 				message: {
@@ -235,7 +222,7 @@ export class UserController {
 		}
 	}
 
-	public async forgotPasswordSendemail(req: Request, res: Response) {
+	public async forgotPasswordSendEmail(req: Request, res: Response) {
 		try {
 			const {
 				body: { email },
@@ -244,7 +231,7 @@ export class UserController {
 			const userFounded = await this.userApiService.getUserByEmail(email);
 
 			if (!userFounded) {
-				return res.status(404).send({ message: 'User not found' });
+				return res.status(404).send({ message: 'Email not found' });
 			}
 
 			const token = nanoid(6);
@@ -257,12 +244,14 @@ export class UserController {
 			);
 
 			//Envio mail
-			await this.userEmailSenderService.notifyUserForResetPassword(
+			const info = await this.userEmailSenderService.notifyUserForResetPassword(
 				email,
 				token,
 			);
 
-			res.status(201).send({
+			console.log({ info });
+
+			res.status(200).send({
 				message: {
 					id: updateUser?.id,
 					email: updateUser?.email,
@@ -290,7 +279,7 @@ export class UserController {
 			);
 
 			if (!userFinded)
-				return res.status(404).send({ message: 'User not found' });
+				return res.status(404).send({ message: 'Invalid token' });
 
 			//Encriptar contraseña
 			const passwordHash = bcrypt.hashSync(password, 5);
@@ -303,7 +292,7 @@ export class UserController {
 				},
 			);
 
-			res.status(201).send({
+			res.status(200).send({
 				message: {
 					id: updateUser?.id,
 					username: updateUser?.username,

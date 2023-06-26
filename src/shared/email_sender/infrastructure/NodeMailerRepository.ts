@@ -6,36 +6,27 @@ import {
 	notifyAdminNewUserEmailTemplate,
 	resetPasswordEmailTemplate,
 } from '../../../static/email-templates/email-template';
-import { properties } from '../../../config/env.properties';
+import { propertiesGlobal } from '../../../config/env.properties';
 
 export class NodeMailerRepository implements EmailRepository {
 	private readonly tranpsorter: Transporter;
 	constructor() {
-		this.tranpsorter = nodemailer.createTransport({
-			host: properties.EMAIL_HOST,
-			port: Number(properties.EMAIL_PORT),
+		this.tranpsorter = this.getTransporterAccordingToEnvMode();
+	}
+
+	private getTransporterAccordingToEnvMode() {
+		return nodemailer.createTransport({
+			host: propertiesGlobal.propertiesEmail?.email_host,
+			port: 587,
 			auth: {
-				user: properties.EMAIL_AUTH_USER,
-				pass: properties.EMAIL_AUTH_PASS,
+				user: propertiesGlobal.propertiesEmail?.email_auth_user,
+				pass: propertiesGlobal.propertiesEmail?.email_auth_pass,
 			},
 		});
 	}
 
 	private async sendMail(mailOptions: MailOptions): Promise<any> {
 		return await this.tranpsorter.sendMail(mailOptions);
-	}
-
-	private async sendMailTest(mailOption: MailOptions) {
-		const tranpsorterTest = nodemailer.createTransport({
-			host: 'smtp.ethereal.email',
-			port: 587,
-			auth: {
-				user: 'krystal.collier@ethereal.email',
-				pass: 'kzQMUPtw6C9nddDjgZ',
-			},
-		});
-
-		return await tranpsorterTest.sendMail(mailOption);
 	}
 
 	async notifyAdminForNewUser(email: string, username: string) {
@@ -50,16 +41,6 @@ export class NodeMailerRepository implements EmailRepository {
 
 	async notifyUserForNewSignUp(email: string, username: string, token: string) {
 		return await this.sendMail(
-			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
-		);
-	}
-
-	async notifyUserForNewSignUpTest(
-		email: string,
-		username: string,
-		token: string,
-	) {
-		return await this.sendMailTest(
 			newUserEmailTemplate('foria@creatio-control.com', email, username, token),
 		);
 	}
