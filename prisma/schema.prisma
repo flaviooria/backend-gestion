@@ -5,23 +5,86 @@ generator client {
   provider = "prisma-client-js"
 }
 
-//datasource db {
-//  provider = "postgresql"
-//  url      = env("DATABASE_URL")
-//}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-datasource sqlite {
-  provider = "sqlite"
-  url = "file:./dev.db"
+// datasource sqlite {
+//   provider = "mysql"
+//   url      = "file:./dev.db"
+// }
+
+enum RoleEmployed {
+  DEVELOPER
+  MANAGER
+}
+
+enum TaskStatus {
+  TO_BE_DONE
+  IN_PROGRESS
+  DONE
 }
 
 model User {
-  id         Int   @id @default(autoincrement())
-  email      String   @unique
-  username   String   @unique
-  password   String
-  isAdmin    Boolean? @default(true)
-  isVerified Boolean? @default(false)
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  username     String    @unique
+  password     String
+  isAdmin      Boolean?  @default(true)
+  isVerified   Boolean?  @default(false)
   tokenAccount String
-  tokenResetPassword String? 
+  projects     Project[] @relation("clientOwner")
+}
+
+model Employed {
+  id               String          @id @default(uuid())
+  name             String
+  surname          String
+  email            String          @unique
+  password         String
+  yearBirth        DateTime
+  managerId        String?         @unique
+  manager          Employed?       @relation("Manager", fields: [managerId], references: [id])
+  employed         Employed?       @relation("Manager")
+  isManager        Boolean         @default(false)
+  role             RoleEmployed
+  projects         Project[]       @relation("employeeOnProjects")
+  assignedProjecst Project?        @relation("assignedEmployee")
+  assignedTasks    TasksEmployee[] @relation("assignedTasks")
+  receivedTasks    TasksEmployee[] @relation("receivedTasks")
+}
+
+model Project {
+  id             String     @id @default(uuid())
+  name           String
+  url_repository String     @unique
+  start_date     DateTime
+  end_date       DateTime?
+  clientId       Int        @unique
+  client         User       @relation("clientOwner", fields: [clientId], references: [id])
+  employeds      Employed[] @relation("employeeOnProjects")
+  managerId      String     @unique
+  manager        Employed   @relation("assignedEmployee", fields: [managerId], references: [id])
+}
+
+model Task {
+  id          String          @id @default(uuid())
+  subject     String
+  description String?
+  start_date  DateTime
+  end_date    DateTime
+  status      TaskStatus      @default(TO_BE_DONE)
+  employee    TasksEmployee[]
+}
+
+model TasksEmployee {
+  id Int @id @default(autoincrement())
+
+  assignedId       String   @unique
+  assignedEmployed Employed @relation("assignedTasks", fields: [assignedId], references: [id])
+  receivedId       String   @unique
+  receivedEmployed Employed @relation("receivedTasks", fields: [receivedId], references: [id])
+  taskId           String   @unique
+  task             Task     @relation(fields: [taskId], references: [id])
 }

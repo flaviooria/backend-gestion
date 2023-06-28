@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  mysql:
+    container_name: mysql_gestion_employeds
+    image: mysql:8.0.33
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: flavio
+      MYSQL_DATABASE: gestion_employed
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+  admin:
+    container_name: phpMyAdmin
+    image: phpmyadmin:apache
+    ports:
+      - 8081:80
+    environment:
+      PMA_ARBITRARY: 1
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    external: true
