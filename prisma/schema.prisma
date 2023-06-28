@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -34,6 +34,7 @@ model User {
   isAdmin      Boolean?  @default(true)
   isVerified   Boolean?  @default(false)
   tokenAccount String
+  tokenResetPassword String?
   projects     Project[] @relation("clientOwner")
 }
 
@@ -61,8 +62,8 @@ model Project {
   url_repository String     @unique
   start_date     DateTime
   end_date       DateTime?
-  clientId       Int        @unique
-  client         User       @relation("clientOwner", fields: [clientId], references: [id])
+  clientId       Int?        @unique
+  client         User?       @relation("clientOwner", fields: [clientId], references: [id])
   employeds      Employed[] @relation("employeeOnProjects")
   managerId      String     @unique
   manager        Employed   @relation("assignedEmployee", fields: [managerId], references: [id])
